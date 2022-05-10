@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PONG!</title>
+</head>
+<body>
+
+
+
+    <div style="font-size: 40px;" id="counter1">0</div>
+    <div style="font-size: 40px;" id="counter2">0</div>
+    <canvas id="tela" height="600" width="600">
+    
+
+    </canvas>
+
+
+    <script>
+        
+        let canvas;
+        let ctx;
+        
+
+        var j = 0;
+        var jC = 0;
+        canvas =  document.getElementById("tela"); //definindo a tela
+        ctx = canvas.getContext("2d"); //contexto da tela?
+
+        document.addEventListener("keydown",controles);
+        var dx = 10;
+        var dxC = 10;
+        var barra = 
+        [
+            {x:280,y:560},
+            {x:290,y:560},
+            {x:300,y:560},
+            {x:310,y:560},
+            {x:320,y:560},
+            {x:330,y:560},
+            {x:340,y:560},
+            {x:350,y:560},
+            {x:360,y:560},
+
+        ]
+
+        var barraDeCima = 
+        [
+            {x:280,y:30},
+            {x:290,y:30},
+            {x:300,y:30},
+            {x:310,y:30},
+            {x:320,y:30},
+            {x:330,y:30},
+            {x:340,y:30},
+            {x:350,y:30},
+            {x:360,y:30},
+
+        ]
+
+        var bolinha =
+        [
+            {x: 300, y: 300}
+        ]
+        var velocidade = 40;
+
+        main();
+        function main(){
+            setTimeout(function onTick(){
+
+
+                desenhaTela();
+                
+                if (j==0)
+                {
+                    movimentoBarraDireita();
+                }
+                else{
+                    movimentoBarraEsquerda();
+                }
+                if (barra[0].x >= 590)
+                {
+                    dx = -10;
+
+                    j=1;
+                }
+                else if (barra[8].x <= 0)
+                {
+                    dx = 10;
+
+                    j=0;
+                }
+
+
+
+                ////////////////////////////////////////
+
+                //barraBot();
+
+                if (jC==0)
+                {
+                    movimentoBarraCimaDireita();
+                }
+                else{
+                    movimentoBarraCimaEsquerda();
+                }
+                if (barraDeCima[0].x >= 590)
+                {
+                    dxC = -10;
+
+                    jC=1;
+                }
+                else if (barraDeCima[8].x <= 0)
+                {
+                    dxC = 10;
+
+                    jC=0;
+                }
+
+                
+                
+               
+
+                
+                desenhaBolinha();
+
+
+                //if (gameOver)
+                
+                movimentaBolinha();
+
+                desenhaBarraCima();
+                
+                desenhaBarra();
+                
+
+                
+                
+
+
+                main();
+
+            },velocidade)
+        }
+        
+        function desenhaTela()
+        {
+            ctx.fillStyle = 'black'
+            ctx.fillRect(0,0,600,600)
+        }
+        
+        
+
+        function desenhaUmaBarra(pedacoBarra)
+        {
+            ctx.fillStyle = 'white'
+            ctx.fillRect(pedacoBarra.x,pedacoBarra.y,10,10);
+        }
+        function desenhaBarra()
+        {
+            barra.forEach(desenhaUmaBarra);
+        }
+        function desenhaBarraCima()
+        {
+            barraDeCima.forEach(desenhaUmaBarra);
+        }
+
+        var i = 0;
+        var dbx = 10;
+        var dby =5;
+
+        function desenhaBolinha()
+        {
+            ctx.fillStyle = 'white';
+            ctx.fillRect(bolinha[0].x,bolinha[0].y,10,10);
+        }
+
+        var pontoCima = 0;
+        var pontoBaixo = 0;
+
+        function movimentaBolinha()
+        {
+
+            
+
+            const bola = {x: bolinha[0].x+dbx,y: bolinha[0].y+dby}
+            bolinha.unshift(bola);
+            bolinha.pop();
+
+            if(bolinha[0].x == 580 )
+            {
+                dbx= dbx*-1;
+            }
+            if(bolinha[0].x == 0 )
+            {
+                dbx= dbx*-1;
+            }
+            
+
+
+            /////////////////////////////////////
+
+           
+            
+
+
+
+            if(bolinha[0].y >= 600 )
+            {
+               
+                pontoCima = pontoCima+1 ;
+                bolinha[0].x = 300;
+                bolinha[0].y = 300;
+                dbx = 10;
+                dby =5;
+                document.getElementById('counter1').innerHTML = pontoCima;
+            }
+            if(bolinha[0].y <= -10 )
+            {
+                
+                pontoBaixo = pontoBaixo+1;
+                bolinha[0].x = 300;
+                bolinha[0].y = 300;
+                dbx = 10;
+                dby =5;
+                document.getElementById('counter2').innerHTML = pontoBaixo;
+                
+            }
+            /////////////////////////////////
+
+            for (w=0;w<barra.length;w++)
+            {
+                var rounded = Math.round(bolinha[0].y / 10) * 10;
+                    if(bolinha[0].x == barra[w].x && rounded == barra[w].y-10)
+                    {
+                        if (w<4){
+                            dbx= 10;
+                            dby = dby*-1;
+                        }
+                        else if ( w> 4){
+                            dbx= -10;
+                            dby = dby*-1;
+                        }
+                        else if(w==4) {
+                            dbx=0;
+                            dby = dby*-2;
+                        }
+
+                        
+
+                    }
+
+            }
+            for (w=0;w<9;w++)
+            {
+                var rounded = Math.round(bolinha[0].y / 10) * 10;
+                    if(bolinha[0].x == barraDeCima[w].x && rounded == barraDeCima[w].y+10 )
+                    {
+                        if (w<4){
+                            dbx= 10;
+                            dby = dby*-1;
+                        }
+                        else if (w> 4){
+                            dbx= -10;
+                            dby = dby*-1;
+                        }
+                        else if(w==4) {
+                            dbx=0;
+                            dby = dby*-2;
+                        }
+
+                        
+
+                    }
+
+            }
+
+
+        
+        }
+
+        function gameOver()
+        {
+            ctx.fillStyle= 'red';
+            ctx.fillRect(600,600,0,0);
+
+        }
+        
+        
+
+        function movimentoBarraDireita()
+        {
+            const ponta = {x: barra[0].x + dx, y: barra[0].y }
+            
+            barra.unshift(ponta);// troca o primeiro por isso
+            barra.pop();//remove o ultimo
+
+        }
+        function movimentoBarraEsquerda()
+        {
+            const ponta = {x: barra[8].x + dx, y: barra[8].y }
+            
+            barra.push(ponta);//troca o ultimo por isso
+
+            barra.shift();//remove o primeiro
+
+        }
+
+        //////////////////////////////////////////////////
+        
+        function movimentoBarraCimaDireita()
+        {
+            const ponta = {x: barraDeCima[0].x + dxC, y: barraDeCima[0].y }
+            
+            barraDeCima.unshift(ponta);// troca o primeiro por isso
+            barraDeCima.pop();//remove o ultimo
+
+        }
+        function movimentoBarraCimaEsquerda()
+        {
+            const ponta = {x: barraDeCima[8].x + dxC, y: barraDeCima[8].y }
+            
+            barraDeCima.push(ponta);//troca o ultimo por isso
+
+            barraDeCima.shift();//remove o primeiro
+
+        }
+        
+
+
+
+        function controles(event)
+        {
+
+            
+            const LEFT_KEY = 37;
+            const RIGHT_KEY = 39; //dando nome aos codigos das teclas no teclado; (setinhas)
+            const LEFTA = 65 ;
+            const LEFTD = 68;
+
+
+            const aperta = event.keyCode;// aperta ( reconhece o codigo da tecla em que o event(pressionada) ocorreu (event = keydown))
+
+
+
+            if (aperta == LEFT_KEY &&  barra[8].x > 0)
+            {
+                dx = -10;
+
+                j=1;
+
+            }
+            if (aperta == RIGHT_KEY &&  barra[0].x < 590)
+            {
+                dx = 10;
+
+                j=0;
+
+            }
+
+
+
+            if (aperta == LEFTA && barraDeCima[8].x >0)
+            {
+                dxC = -10;
+
+                jC=1;
+
+            }
+            if (aperta == LEFTD && barraDeCima[0].x < 590)
+            {
+                dxC = 10;
+
+                jC=0;
+
+            }
+
+            function barraBot()
+            {
+                if (dbx>0)
+                {
+                    jC = 1;
+                }
+                else if (dbx<0)
+                {
+                    jC = 0;
+                }
+                else if (dbx==0)
+                {
+                    dxC = 0;
+                }
+            }
+
+            
+            
+            
+
+
+
+        }
+
+
+    </script>
+</body>
+</html>
